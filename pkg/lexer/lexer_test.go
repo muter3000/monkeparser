@@ -2,8 +2,8 @@
 package lexer_test
 
 import (
-	"monkeparser/pkg/lexer"
-	"monkeparser/pkg/token"
+	"github.com/muter3000/monkeparser/pkg/lexer"
+	"github.com/muter3000/monkeparser/pkg/token"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

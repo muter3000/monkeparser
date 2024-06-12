@@ -3,9 +3,9 @@ package repl
 import (
 	"bufio"
 	"fmt"
+	"github.com/muter3000/monkeparser/pkg/lexer"
+	"github.com/muter3000/monkeparser/pkg/token"
 	"io"
-	"monkeparser/pkg/lexer"
-	"monkeparser/pkg/token"
 )
 
 type Repl struct {

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"monkeparser/pkg/repl"
+	"github.com/muter3000/monkeparser/pkg/repl"
 	"os"
 )
 

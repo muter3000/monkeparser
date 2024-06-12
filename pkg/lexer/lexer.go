@@ -1,6 +1,6 @@
 package lexer
 
-import "monkeparser/pkg/token"
+import "github.com/muter3000/monkeparser/pkg/token"
 
 type Lexer struct {
 	code         string

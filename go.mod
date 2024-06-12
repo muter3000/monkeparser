@@ -1,4 +1,4 @@
-module monkeparser
+module github.com/muter3000/monkeparser
 
 go 1.22
 
