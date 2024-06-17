@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/muter3000/monkeparser/pkg/lexer"
-	"github.com/muter3000/monkeparser/pkg/token"
+	"github.com/muter3000/monkeparser/pkg/parser"
 	"io"
 )
 
@@ -37,16 +37,38 @@ func (r *Repl) Start() {
 		if !scanned {
 			return
 		}
-
 		line := scanner.Text()
 		l := lexer.New(line)
+		p := parser.New(l)
+		program := p.ParseProgram()
+		if len(p.Errors()) != 0 {
+			printParserErrors(r.output, p.Errors())
+			continue
+		}
+		_, err := io.WriteString(r.output, program.String())
+		if err != nil {
+			panic(err)
+		}
+		_, err = io.WriteString(r.output, "\n")
+		if err != nil {
+			panic(err)
+		}
+	}
+}
 
-		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
-			_, err := r.output.Write(
-				[]byte(fmt.Sprintf("%+v\n", tok)))
-			if err != nil {
-				return
-			}
+func printParserErrors(out io.Writer, errors []string) {
+	_, err := io.WriteString(out, "You wrote some really bad code!\n")
+	if err != nil {
+		panic(err)
+	}
+	_, err = io.WriteString(out, " parser errors:\n")
+	if err != nil {
+		panic(err)
+	}
+	for _, msg := range errors {
+		_, err = io.WriteString(out, "\t"+msg+"\n")
+		if err != nil {
+			panic(err)
 		}
 	}
 }
