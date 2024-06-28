@@ -3,6 +3,7 @@ package repl
 import (
 	"bufio"
 	"fmt"
+	"github.com/muter3000/monkeparser/pkg/evaluator"
 	"github.com/muter3000/monkeparser/pkg/lexer"
 	"github.com/muter3000/monkeparser/pkg/parser"
 	"io"
@@ -25,11 +26,6 @@ Feel free to type in commands (they won't work).
 `
 
 func (r *Repl) Start() {
-	_, err := r.output.Write([]byte(welcomeMessage))
-	if err != nil {
-		return
-	}
-
 	scanner := bufio.NewScanner(r.input)
 	for {
 		fmt.Printf(r.prompt)
@@ -45,13 +41,10 @@ func (r *Repl) Start() {
 			printParserErrors(r.output, p.Errors())
 			continue
 		}
-		_, err := io.WriteString(r.output, program.String())
-		if err != nil {
-			panic(err)
-		}
-		_, err = io.WriteString(r.output, "\n")
-		if err != nil {
-			panic(err)
+		evaluated := evaluator.Eval(program)
+		if evaluated != nil {
+			io.WriteString(r.output, evaluated.Inspect())
+			io.WriteString(r.output, "\n")
 		}
 	}
 }
