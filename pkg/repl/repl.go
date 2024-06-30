@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/muter3000/monkeparser/pkg/evaluator"
 	"github.com/muter3000/monkeparser/pkg/lexer"
+	"github.com/muter3000/monkeparser/pkg/object"
 	"github.com/muter3000/monkeparser/pkg/parser"
 	"io"
 )
@@ -20,13 +21,9 @@ func New(input io.Reader, output io.Writer, prompt string) *Repl {
 	return &Repl{input: input, output: output, prompt: prompt}
 }
 
-const welcomeMessage = `
-Welcome to the Monke programming language REPL!
-Feel free to type in commands (they won't work).
-`
-
 func (r *Repl) Start() {
 	scanner := bufio.NewScanner(r.input)
+	env := object.NewEnvironment()
 	for {
 		fmt.Printf(r.prompt)
 		scanned := scanner.Scan()
@@ -41,10 +38,16 @@ func (r *Repl) Start() {
 			printParserErrors(r.output, p.Errors())
 			continue
 		}
-		evaluated := evaluator.Eval(program)
+		evaluated := evaluator.Eval(program, env)
 		if evaluated != nil {
-			io.WriteString(r.output, evaluated.Inspect())
-			io.WriteString(r.output, "\n")
+			_, err := io.WriteString(r.output, evaluated.Inspect())
+			if err != nil {
+				panic(err)
+			}
+			_, err = io.WriteString(r.output, "\n")
+			if err != nil {
+				return
+			}
 		}
 	}
 }
